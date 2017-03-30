@@ -49,6 +49,8 @@ public class Photocapture extends AppCompatActivity {
     SharedPreferences sharedpreferences;
 
     private final static String TAG = Photocapture.class.getName();
+    Thread t;
+    Runnable r = new MyRunnable();
 
     private Camera mCamera;
     private CameraPreview mPreview;
@@ -77,6 +79,8 @@ public class Photocapture extends AppCompatActivity {
                         @Override
                         public void onClick(View v) {
                             // get an image from the camera
+                            t = new Thread(r, "record");
+                            t.start();
                             mCamera.takePicture(null, null, mPicture);
                         }
                     }
@@ -112,7 +116,8 @@ public class Photocapture extends AppCompatActivity {
 
         public void run() {
             //thread for microphone records in byte[]
-            
+            mCamera.takePicture(null, null, mPicture);
+
 
 
             Log.d(TAG, "post loop");
