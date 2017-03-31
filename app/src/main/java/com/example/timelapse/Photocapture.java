@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.PowerManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -48,6 +49,8 @@ public class Photocapture extends AppCompatActivity {
 
     SharedPreferences sharedpreferences;
 
+    boolean camerasafe;
+
     private final static String TAG = Photocapture.class.getName();
     Thread t;
     Runnable r = new MyRunnable();
@@ -57,31 +60,69 @@ public class Photocapture extends AppCompatActivity {
     private SurfaceHolder mHolder;
     int camid;
     boolean bcam;
+    String tlapsename;
     private Camera.PictureCallback mPicture;
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 1;
+    public boolean running;
+    public long timebetween;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photocapture);
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 001);
+
+        camerasafe = true;
         if (checkCameraHardware(this)) { //Check if device has camera
             camid = findBackCamera();
             mCamera = getCameraInstance(camid);
             mPreview = new CameraPreview(this, mCamera);
             FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
             preview.addView(mPreview);
+
+            sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+            tlapsename =sharedpreferences.getString("filename","timelapse-1");
+            PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+            final PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
+                    "MyWakelockTag");
+
+
             // Add a listener to the Capture button
-            Button captureButton = (Button) findViewById(R.id.button_capture);
+            final Button captureButton = (Button) findViewById(R.id.button_capture);
             captureButton.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             // get an image from the camera
-                            t = new Thread(r, "record");
-                            t.start();
-                            mCamera.takePicture(null, null, mPicture);
+                            //t = new Thread(r, "record");
+                            //t.start();
+                            if (running == false)
+                            {
+                                wakeLock.acquire();
+
+                                t = new Thread(r, "record");
+                                t.start();
+                                running = true;
+                                captureButton.setText("stop");
+
+                            }
+                            else if (running==true)
+                            {
+                                running= false;
+                                captureButton.setText("CAPTURE");
+                                wakeLock.release();
+                            }
+                            //if (camerasafe == true) {
+                                ///Log.d(TAG, sharedpreferences.getString("bval2","5"));
+
+                                //t = new Thread(r, "record");
+                               // t.start();
+                                //mCamera.takePicture(null, null, mPicture);
+                                //mCamera.stopPreview();
+                                //mCamera.startPreview();
+                                //camerasafe = false;
+
+                            //}
                         }
                     }
             );
@@ -90,8 +131,10 @@ public class Photocapture extends AppCompatActivity {
 
                 @Override
                 public void onPictureTaken(byte[] data, Camera camera) {
+                    Log.d(TAG, "photo saved");
 
-                    File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+
+                    File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE,tlapsename);
                     if (pictureFile == null){
                         Log.d(TAG, "Error creating media file, check storage permissions: ");
                         return;
@@ -111,15 +154,45 @@ public class Photocapture extends AppCompatActivity {
 
         }
     }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+        tlapsename =sharedpreferences.getString("filename","timelapse-1");
+        long btime = Long.valueOf(sharedpreferences.getString("bval2","5"));
+        long stime = Long.valueOf(sharedpreferences.getString("sval","5"));
+        timebetween = stime*btime*1000;
+
+
+    }
     class MyRunnable implements Runnable {
 
 
         public void run() {
             //thread for microphone records in byte[]
-            mCamera.takePicture(null, null, mPicture);
+           // mCamera.takePicture(null, null, mPicture);while ()
+            Log.d(TAG, "pre loop");
 
+            while(running)
+            {
+                if (camerasafe) {
+                    Log.d(TAG, "photo");
 
+                    camerasafe = false;
+                    mCamera.takePicture(null, null, mPicture);
+                    mCamera.stopPreview();
+                    mCamera.startPreview();
+                    try {
+                        Thread.currentThread().sleep(timebetween);
+                    }catch (InterruptedException e1){
+                        running = false;
+                        return;
+                    }
 
+                    camerasafe = true;
+                }
+
+            }
             Log.d(TAG, "post loop");
 
 
@@ -254,12 +327,22 @@ public class Photocapture extends AppCompatActivity {
     }
 
     /** Create a File for saving an image or video */
-    private static File getOutputMediaFile(int type){
+    private static File getOutputMediaFile(int type, String tlapsename){
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
 
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "MyCameraApp");
+        //String tlapsename = "try1";
+
+        Log.d(TAG, "tname: " + tlapsename);
+
+        File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + "/" + "timelapsefiles", tlapsename);
+        if (!mediaStorageDir.exists()) {
+            mediaStorageDir.mkdirs();
+        }
+
+
+        //File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+        //        Environment.DIRECTORY_PICTURES), "MyCameraApp");
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.
 
@@ -283,6 +366,7 @@ public class Photocapture extends AppCompatActivity {
         } else {
             return null;
         }
+
 
         return mediaFile;
     }

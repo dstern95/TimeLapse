@@ -74,11 +74,13 @@ public class CaptureSettings extends AppCompatActivity {
         EditText et = (EditText)findViewById(R.id.smallinterval);
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
+        EditText fn = (EditText)findViewById(R.id.filename);
         SharedPreferences.Editor editor = sharedpreferences.edit();
 
         editor.putString("sval", et.getText().toString());
         editor.putString("bval", Integer.toString(spin.getSelectedItemPosition()));
         editor.putString("bval2", times.get(ordtimes[spin.getSelectedItemPosition()]));
+        editor.putString("filename",fn.getText().toString());
         editor.commit();
 
         int a = spin.getSelectedItemPosition();

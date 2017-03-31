@@ -28,7 +28,16 @@
         android:layout_centerHorizontal="true"
         android:text="Save Settings"
         android:onClick="save"
+        android:layout_below="@+id/filename"
+        />
+
+    <EditText
+        android:id="@+id/filename"
+        android:hint="timelapse-1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/biginterval"
+
         />
 
 </RelativeLayout>
