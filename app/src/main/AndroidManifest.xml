@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".Photocapture"
-            android:screenOrientation="landscape"
+            android:screenOrientation="reverseLandscape"
 
 
             />
