@@ -41,7 +41,19 @@ public class PhotoView extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_view);
-        File path = new File(Environment.getExternalStorageDirectory() + "/" + "timelapsefiles/" + "ha/");
+
+
+
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        Bundle extras = getIntent().getExtras();
+        String fname = extras.getString("foldername");
+
+        File path = new File(Environment.getExternalStorageDirectory() + "/" + "timelapsefiles/" + fname+"/");
         files = path.listFiles();
         Log.d(TAG, String.valueOf(files.length) + "****");
         //ImageView jpgview = (ImageView) findViewById(R.id.photo_view);
@@ -51,9 +63,17 @@ public class PhotoView extends AppCompatActivity {
         _imagView=(ImageView) findViewById(R.id.photo_view);
         _index=0;
         _timer= new Timer();
-        _timer.schedule(new TickClass(), 0, 2000);
+        _timer.schedule(new TickClass(), 0, 500);
+
 
     }
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        _timer.cancel();
+    }
+
 
     private class TickClass extends TimerTask
     {

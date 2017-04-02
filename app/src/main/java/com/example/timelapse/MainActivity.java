@@ -41,8 +41,12 @@ public class MainActivity extends AppCompatActivity {
     {
         Log.d(TAG, "here2");
 
-        Intent intent1 = new Intent(this, PhotoView.class);
+
+        Intent intent1 = new Intent(this, PhotoFiles.class);
         startActivity(intent1);
+
+        //Intent intent1 = new Intent(this, PhotoView.class);
+        //startActivity(intent1);
 
     }
 }
