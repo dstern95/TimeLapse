@@ -109,7 +109,7 @@ public class PhotoView extends AppCompatActivity {
         _imagView=(ImageView) findViewById(R.id.photo_view);
         _index=0;
         _timer= new Timer();
-        _timer.schedule(new TickClass(), 0, 400);
+        _timer.schedule(new TickClass(), 0, 600);
 
 
     }
