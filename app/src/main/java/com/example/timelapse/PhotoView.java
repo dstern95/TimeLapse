@@ -11,17 +11,23 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ViewFlipper;
 
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
 public class PhotoView extends AppCompatActivity {
     String[] fileArray;
+    Thread t;
+    Runnable r = new PhotoView.MyRunnable();
+
     private ImageView _imagView;
     private Timer _timer;
     private int _index;
@@ -36,11 +42,21 @@ public class PhotoView extends AppCompatActivity {
     public boolean running;
     public int ct;
 
+    Bitmap[] bitt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_view);
+        Bundle extras = getIntent().getExtras();
+        String fname = extras.getString("foldername");
+
+        File path = new File(Environment.getExternalStorageDirectory() + "/" + "timelapsefiles/" + fname+"/");
+        files = path.listFiles();
+
+        //t = new Thread(r, "record");
+        //t.start();
+
 
 
 
@@ -50,11 +66,7 @@ public class PhotoView extends AppCompatActivity {
     protected void onResume()
     {
         super.onResume();
-        Bundle extras = getIntent().getExtras();
-        String fname = extras.getString("foldername");
 
-        File path = new File(Environment.getExternalStorageDirectory() + "/" + "timelapsefiles/" + fname+"/");
-        files = path.listFiles();
         Log.d(TAG, String.valueOf(files.length) + "****");
         //ImageView jpgview = (ImageView) findViewById(R.id.photo_view);
         //Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/" + "timelapsefiles/" + "sunrise/");
@@ -63,8 +75,7 @@ public class PhotoView extends AppCompatActivity {
         _imagView=(ImageView) findViewById(R.id.photo_view);
         _index=0;
         _timer= new Timer();
-        _timer.schedule(new TickClass(), 0, 500);
-
+        _timer.schedule(new TickClass(), 0, 400);
 
     }
     @Override
@@ -72,6 +83,35 @@ public class PhotoView extends AppCompatActivity {
     {
         super.onPause();
         _timer.cancel();
+    }
+
+    class MyRunnable implements Runnable {
+
+
+        public void run() {
+            bitt = new Bitmap[files.length];
+            for(int i =0;i<files.length;i++)
+            {
+                bitt[i] =BitmapFactory.decodeFile(files[i].getAbsolutePath());
+            }
+
+            Log.d(TAG,"done");
+
+
+
+        }
+    }
+
+    public void startdisplay(View v)
+    {
+
+        handler= new MyHandler();
+        _imagView=(ImageView) findViewById(R.id.photo_view);
+        _index=0;
+        _timer= new Timer();
+        _timer.schedule(new TickClass(), 0, 400);
+
+
     }
 
 
@@ -96,6 +136,7 @@ public class PhotoView extends AppCompatActivity {
             try {
 
                 Bitmap bmp= BitmapFactory.decodeFile(files[findex].getAbsolutePath());
+                //Bitmap bmp = bitt[findex];
                 Log.d(TAG, String.valueOf(findex) + "SHOWING THIS");
                 findex+=1;
                 _imagView.setImageBitmap(bmp);
