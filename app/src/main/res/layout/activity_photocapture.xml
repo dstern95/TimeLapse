@@ -28,7 +28,7 @@
         android:shadowDy="0"
         android:shadowRadius="5"
         android:layout_centerInParent="true"
-        android:
+        android:layout_alignBottom="@id/photo_view"
         />
 
 </RelativeLayout>
