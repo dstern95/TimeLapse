@@ -40,7 +40,15 @@
         android:shadowDx="0"
         android:shadowDy="0"
         android:shadowRadius="5"
-
         />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo"
+        android:layout_centerInParent="true"
+        android:layout_above="@id/angry_btn"/>
+
+
 
 </RelativeLayout>
