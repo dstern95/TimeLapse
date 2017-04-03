@@ -8,21 +8,39 @@
     tools:context="com.example.timelapse.MainActivity">
 
     <Button
-        android:id="@+id/capture"
-        android:onClick="Photo"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:text="Capture"
+        android:id="@+id/angry_btn"
+
+        android:text="START CAPTURING"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:onClick ="Photo"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:background="@drawable/buttonshape"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        android:layout_centerInParent="true"
         />
 
 
     <Button
-        android:id="@+id/Gallery"
-        android:layout_below="@+id/capture"
+        android:id="@+id/angery"
+        android:layout_below="@+id/angry_btn"
         android:onClick="Photoview"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:text="View"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:text="GALLERY"
+        android:layout_centerInParent="true"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:background="@drawable/buttonshape"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+
         />
 
 </RelativeLayout>

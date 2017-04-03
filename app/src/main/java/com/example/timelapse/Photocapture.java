@@ -88,7 +88,7 @@ public class Photocapture extends AppCompatActivity {
 
 
             // Add a listener to the Capture button
-            final Button captureButton = (Button) findViewById(R.id.button_capture);
+            final Button captureButton = (Button) findViewById(R.id.angry_btn);
             captureButton.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
