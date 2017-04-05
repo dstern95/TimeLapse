@@ -63,9 +63,6 @@ public class Photocapture extends AppCompatActivity {
 
     private float CframeRate = 1.0f;
 
-
-    boolean camerasafe;
-
     private final static String TAG = Photocapture.class.getName();
 
     private Camera mCamera; //Camera object
@@ -73,8 +70,6 @@ public class Photocapture extends AppCompatActivity {
     MediaRecorder medrec;
 
     private SurfaceHolder mHolder;
-    int camid;
-    boolean bcam;
     String tlapsename;
     private Camera.PictureCallback mPicture;
     public static final int MEDIA_TYPE_IMAGE = 1;
