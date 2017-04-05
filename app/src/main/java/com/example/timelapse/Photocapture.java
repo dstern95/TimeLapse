@@ -182,7 +182,7 @@ public class Photocapture extends AppCompatActivity {
     }
 
     public void play(View v) {
-        Intent i = new Intent(this, MainActivity.class); //CHANGE THIS TO PLAY
+        Intent i = new Intent(this, Play.class);
         i.putExtra("recName", tlapsename);
         startActivity(i);
     }
@@ -401,6 +401,16 @@ public class Photocapture extends AppCompatActivity {
         File mediaFile;
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + "VID_" + timeStamp + ".MP4");
         return mediaFile;
+    }
+
+    public void gallery(View v){
+        Intent intent = new Intent(this, VidGallery.class);
+        startActivity(intent);
+    }
+    public void settings(View v){
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("fps",1);
+        startActivityForResult(intent,RESULT_OK);
     }
 
     /** Alt method from original
