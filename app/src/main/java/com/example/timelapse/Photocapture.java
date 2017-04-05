@@ -216,16 +216,25 @@ public class Photocapture extends AppCompatActivity {
             Log.d(TAG, Float.toString(cprof.videoFrameRate));
             medrec.setCaptureRate(cprof.videoFrameRate / CframeRate);
             medrec.setProfile(cprof);
+            medrec.setOutputFile(getOutputMediaFile().toString());
 
-
+            /*
             try {
                 medrec.setOutputFile(getOutputMediaFile().toString());
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
+            */
 
             medrec.setPreviewDisplay(mPreview.getHolder().getSurface());
             if (prepareVideoRecorder()) {
+                try {
+                    medrec.prepare();
+                }
+                catch (Exception e)
+                {
+
+                }
                 medrec.start();
                 isRec = true;
             }
@@ -379,7 +388,7 @@ public class Photocapture extends AppCompatActivity {
         }
     }
 
-    private File getOutputMediaFile() {
+    private String getOutputMediaFile() {
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
 
@@ -403,7 +412,10 @@ public class Photocapture extends AppCompatActivity {
         tlapsename = timeStamp;
         File mediaFile;
         mediaFile = new File(mediaStorageDir.getPath() + File.separator + "VID_" + timeStamp + ".MP4");
-        return mediaFile;
+
+        String ms =mediaStorageDir.getPath() + File.separator + "VID_" + timeStamp + ".MP4";
+        return ms;
+        //return mediaFile;
     }
 
     public void gallery(View v){
