@@ -43,6 +43,23 @@
         android:shadowRadius="5"
         />
 
+    <Button
+        android:id="@+id/settings"
+        android:layout_below="@+id/angery"
+        android:onClick="Settings"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:text="SETTINGS"
+        android:layout_centerInParent="true"
+        android:textColor="#FFFFFF"
+        android:textSize="30sp"
+        android:background="@drawable/buttonshape"
+        android:shadowColor="#A8A8A8"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="5"
+        />
+
     <android.support.v7.widget.AppCompatImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

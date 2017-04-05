@@ -54,6 +54,8 @@ public class PhotoView extends AppCompatActivity {
         File path = new File(Environment.getExternalStorageDirectory() + "/" + "timelapsefiles/" + fname+"/");
         files = path.listFiles();
 
+
+
         //t = new Thread(r, "record");
         //t.start();
 

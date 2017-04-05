@@ -189,25 +189,33 @@ public class Photocapture extends AppCompatActivity {
 
     public void capture(View v) {
         Button b1 = (Button) findViewById(R.id.captureButton);
-        Button b2 = (Button) findViewById(R.id.captureButton2);
+        //Button b2 = (Button) findViewById(R.id.captureButton2);
         if (isRec) {
-            b2.setVisibility(View.INVISIBLE);
-            b1.setVisibility(View.VISIBLE);
+            //b2.setVisibility(View.INVISIBLE);
+            //b1.setVisibility(View.VISIBLE);
+            b1.setText("CAPTURE");
+
             medrec.stop(); //Stop Recorder
             releaseMedRec();
             mCamera.lock(); //Regain camera access
+
             isRec = false;
             doneRec = true;
             onResume();
         } else {
-            b2.setVisibility(View.VISIBLE);
-            b1.setVisibility(View.INVISIBLE);
+            //b2.setVisibility(View.VISIBLE);
+            //b1.setVisibility(View.INVISIBLE);
+            b1.setText("STOP");
+            Log.d(TAG, Float.toString(CframeRate));
+            CframeRate = 1;
+
             mCamera.unlock();
             medrec.setCamera(mCamera);
-            medrec.setAudioSource(MediaRecorder.VideoSource.CAMERA);
+            medrec.setVideoSource(MediaRecorder.VideoSource.CAMERA);
             CamcorderProfile cprof = CamcorderProfile.get(CamcorderProfile.QUALITY_TIME_LAPSE_1080P);
             medrec.setCaptureRate(cprof.videoFrameRate / CframeRate);
             medrec.setProfile(cprof);
+
 
             try {
                 medrec.setOutputFile(getOutputMediaFile().toString());
@@ -220,6 +228,12 @@ public class Photocapture extends AppCompatActivity {
                 medrec.start();
                 isRec = true;
             }
+
+            //isRec = true;
+
+
+
+
         }
     }
 

@@ -11,6 +11,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.Toast;
@@ -129,5 +132,38 @@ public class MainActivity extends AppCompatActivity {
         //Intent intent1 = new Intent(this, PhotoView.class);
         //startActivity(intent1);
 
+    }
+
+    public void Settings(View v)
+    {
+        Log.d(TAG, "here2");
+
+
+
+        Intent intent1 = new Intent(this, CaptureSettings.class);
+        startActivity(intent1);
+
+        //Intent intent1 = new Intent(this, PhotoView.class);
+        //startActivity(intent1);
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu m) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.captmenu, m);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_settings:
+                Intent intent1 = new Intent(this, CaptureSettings.class);
+                startActivity(intent1);
+                break;
+
+        }
+        return true;
     }
 }

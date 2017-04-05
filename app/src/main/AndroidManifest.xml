@@ -16,11 +16,10 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:largeHeap="true"
-        >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
@@ -37,7 +36,9 @@
             android:name=".PhotoView"
             android:screenOrientation="landscape" />
         <activity android:name=".CaptureSettings" />
-        <activity android:name=".PhotoFiles"></activity>
+        <activity android:name=".PhotoFiles" />
+        <activity android:name=".viewAlbum" />
+        <activity android:name=".ViewIndiv"></activity>
     </application>
 
 </manifest>
