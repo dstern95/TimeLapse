@@ -1,22 +1,29 @@
 package com.example.timelapse;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.CamcorderProfile;
+import android.media.MediaRecorder;
 import android.os.PowerManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Surface;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Random;
 
 import android.Manifest;
@@ -45,18 +52,26 @@ import java.util.Date;
 import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
 public class Photocapture extends AppCompatActivity {
-    public static final String MyPREFERENCES = "MyPrefs" ;
+    public static final String MyPREFERENCES = "MyPrefs";
 
     SharedPreferences sharedpreferences;
+    private boolean isRec; //To check if the camera is recording right now
+
+    Bundle camsavedInstanceState;
+
+    boolean doneRec; //Check if we are done recording once
+
+    private float CframeRate = 1.0f;
+
 
     boolean camerasafe;
 
     private final static String TAG = Photocapture.class.getName();
-    Thread t;
-    Runnable r = new MyRunnable();
 
-    private Camera mCamera;
-    private CameraPreview mPreview;
+    private Camera mCamera; //Camera object
+    private CameraPreview mPreview; //Preview Object
+    MediaRecorder medrec;
+
     private SurfaceHolder mHolder;
     int camid;
     boolean bcam;
@@ -70,182 +85,173 @@ public class Photocapture extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        try {
+            getSupportActionBar().hide();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
         setContentView(R.layout.activity_photocapture);
 
-        camerasafe = true;
-        if (checkCameraHardware(this)) { //Check if device has camera
-            camid = findBackCamera();
-            mCamera = getCameraInstance(camid);
-            mPreview = new CameraPreview(this, mCamera);
-            FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-            preview.addView(mPreview);
+        camsavedInstanceState = savedInstanceState;
 
-            sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-            tlapsename =sharedpreferences.getString("filename","timelapse-1");
-            PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-            final PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                    "MyWakelockTag");
+        medrec = new MediaRecorder();
 
+        Bundle extraInfo = getIntent().getExtras(); //get all the other variables being passed in
+        CframeRate = extraInfo.getFloat("frames per second");
 
-            // Add a listener to the Capture button
-            final Button captureButton = (Button) findViewById(R.id.angry_btn);
-            captureButton.setOnClickListener(
-                    new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // get an image from the camera
-                            //t = new Thread(r, "record");
-                            //t.start();
-                            if (running == false)
-                            {
-                                wakeLock.acquire();
+        mCamera = getCameraInstance();
+        mPreview = new CameraPreview(this, mCamera);
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        Camera.Parameters p = mCamera.getParameters();
 
-                                t = new Thread(r, "record");
-                                t.start();
-                                running = true;
-                                captureButton.setText("stop");
-
-                            }
-                            else if (running==true)
-                            {
-                                running= false;
-                                captureButton.setText("CAPTURE");
-                                wakeLock.release();
-                            }
-                            //if (camerasafe == true) {
-                                ///Log.d(TAG, sharedpreferences.getString("bval2","5"));
-
-                                //t = new Thread(r, "record");
-                               // t.start();
-                                //mCamera.takePicture(null, null, mPicture);
-                                //mCamera.stopPreview();
-                                //mCamera.startPreview();
-                                //camerasafe = false;
-
-                            //}
-                        }
-                    }
-            );
-
-            mPicture = new Camera.PictureCallback() {
-
-                @Override
-                public void onPictureTaken(byte[] data, Camera camera) {
-                    Log.d(TAG, "photo saved");
-
-
-                    File pictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE,tlapsename);
-                    if (pictureFile == null){
-                        Log.d(TAG, "Error creating media file, check storage permissions: ");
-                        return;
-                    }
-
-                    try {
-                        FileOutputStream fos = new FileOutputStream(pictureFile);
-                        fos.write(data);
-                        fos.close();
-                    } catch (FileNotFoundException e) {
-                        Log.d(TAG, "File not found: " + e.getMessage());
-                    } catch (IOException e) {
-                        Log.d(TAG, "Error accessing file: " + e.getMessage());
-                    }
-                }
-            };
-
+        if (p.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+            p.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO); //This is essentially specifying what the camera does essentially
         }
-    }
-    @Override
-    protected void onResume(){
-        super.onResume();
-        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-        tlapsename =sharedpreferences.getString("filename","timelapse-1");
-        long btime = Long.valueOf(sharedpreferences.getString("bval2","5"));
-        long stime = Long.valueOf(sharedpreferences.getString("sval","5"));
-        timebetween = stime*btime*1000;
+        mCamera.setParameters(p);
 
+        //Now to set the display of the preview and manage its look
 
-    }
-    class MyRunnable implements Runnable {
+        Display d = this.getWindowManager().getDefaultDisplay();
+        int o = d.getRotation();
 
-
-        public void run() {
-            //thread for microphone records in byte[]
-           // mCamera.takePicture(null, null, mPicture);while ()
-            Log.d(TAG, "pre loop");
-
-            while(running)
-            {
-                if (camerasafe) {
-                    Log.d(TAG, "photo");
-
-                    camerasafe = false;
-                    mCamera.takePicture(null, null, mPicture);
-                    mCamera.stopPreview();
-                    mCamera.startPreview();
-                    try {
-                        Thread.currentThread().sleep(timebetween);
-                    }catch (InterruptedException e1){
-                        running = false;
-                        return;
-                    }
-
-                    camerasafe = true;
-                }
-
-            }
-            Log.d(TAG, "post loop");
-
-
-
-        }
-    }
-
-
-    private int findBackCamera() {
-        int camId = 0;
-        // Search for the front facing camera
-        int numberOfCameras = Camera.getNumberOfCameras();
-        for (int i = 0; i < numberOfCameras; i++) {
-            Camera.CameraInfo info = new Camera.CameraInfo();
-            Camera.getCameraInfo(i, info);
-            if (info.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                camId = i;
-                bcam = true;
-                break;
-            }
-        }
-        return camId;
-    }
-
-    /**
-     * Check if this device has a camera
-     */
-    private boolean checkCameraHardware(Context context) {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
-            // this device has a camera
-            return true;
+        if (o == Surface.ROTATION_0) //Portrait View
+        {
+            mCamera.setDisplayOrientation(270); //Realigning
+            medrec.setOrientationHint(270); //Aligning media recorder with camera
+        } else if (o == Surface.ROTATION_90) {
+            mCamera.setDisplayOrientation(180);
+            medrec.setOrientationHint(180);
+        } else if (o == Surface.ROTATION_180) {
+            mCamera.setDisplayOrientation(90);
+            medrec.setOrientationHint(90);
         } else {
-            // no camera on this device
-            return false;
+            mCamera.setDisplayOrientation(0);
+            medrec.setOrientationHint(0);
+        }
+
+        preview.addView(mPreview); //Finally show the preview
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        releaseCam();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        releaseMedRec();
+        releaseCam();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setContentView(R.layout.activity_photocapture);
+        medrec = new MediaRecorder(); //Recreating one
+
+        mCamera = getCameraInstance();
+
+        mPreview = new CameraPreview(this, mCamera);
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+
+        Camera.Parameters p = mCamera.getParameters();
+
+        Display d = this.getWindowManager().getDefaultDisplay();
+        int o = d.getRotation();
+
+        if (o == Surface.ROTATION_0) //Portrait View
+        {
+            mCamera.setDisplayOrientation(270); //Realigning
+            medrec.setOrientationHint(270); //Aligning media recorder with camera
+        } else if (o == Surface.ROTATION_90) {
+            mCamera.setDisplayOrientation(180);
+            medrec.setOrientationHint(180);
+        } else if (o == Surface.ROTATION_180) {
+            mCamera.setDisplayOrientation(90);
+            medrec.setOrientationHint(90);
+        } else {
+            mCamera.setDisplayOrientation(0);
+            medrec.setOrientationHint(0);
+        }
+
+        preview.addView(mPreview); //Finally show the preview
+    }
+
+    public void play(View v) {
+        Intent i = new Intent(this, MainActivity.class); //CHANGE THIS TO PLAY
+        i.putExtra("recName", tlapsename);
+        startActivity(i);
+    }
+
+    public void capture(View v) {
+        Button b1 = (Button) findViewById(R.id.captureButton);
+        Button b2 = (Button) findViewById(R.id.captureButton2);
+        if (isRec) {
+            b2.setVisibility(View.INVISIBLE);
+            b1.setVisibility(View.VISIBLE);
+            medrec.stop(); //Stop Recorder
+            releaseMedRec();
+            mCamera.lock(); //Regain camera access
+            isRec = false;
+            doneRec = true;
+            onResume();
+        } else {
+            b2.setVisibility(View.VISIBLE);
+            b1.setVisibility(View.INVISIBLE);
+            mCamera.unlock();
+            medrec.setCamera(mCamera);
+            medrec.setAudioSource(MediaRecorder.VideoSource.CAMERA);
+            CamcorderProfile cprof = CamcorderProfile.get(CamcorderProfile.QUALITY_TIME_LAPSE_1080P);
+            medrec.setCaptureRate(cprof.videoFrameRate / CframeRate);
+            medrec.setProfile(cprof);
+
+            try {
+                medrec.setOutputFile(getOutputMediaFile().toString());
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+
+            medrec.setPreviewDisplay(mPreview.getHolder().getSurface());
+            if (prepareVideoRecorder()) {
+                medrec.start();
+                isRec = true;
+            }
         }
     }
 
-    /**
-     * A safe way to get an instance of the Camera object.
-     */
-    public static Camera getCameraInstance(int cameraId) {
-        Log.d(TAG, "getCameraInstance(" + cameraId + ")");
-        Camera c = null;
-        try {
-            c = Camera.open(cameraId); // attempt to get a Camera instance
-            Camera.Parameters cp = c.getParameters();
-            Log.d(TAG, "getCameraInstance(" + cameraId + "): Camera.Parameters = "
-                    + cp.flatten());
-        } catch (Exception e) {
-            Log.d(TAG, "Camera.open(" + cameraId + ") exception=" + e);
+    public void save() {
+        if (doneRec) {
+            ask();
         }
-        Log.d(TAG, "getCameraInstance(" + cameraId + ") = " + c);
-        return c; // returns null if camera is unavailable
+    }
+
+    public void ask() {
+        final EditText fpath = new EditText(this);
+        fpath.setHint("This is the name of the saved file");
+        new AlertDialog.Builder(this)
+                .setTitle("Saving TimeLapse...")
+                .setMessage("Enter the name of your recording:")
+                .setView(fpath)
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String url = fpath.getText().toString();
+                        Intent intent = getIntent();
+                        String[] strs = {url, tlapsename};
+                        intent.putExtra("strs", strs);
+                        setResult(RESULT_OK, intent);
+                        finish();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                    }
+                })
+                .show();
     }
 
     /**
@@ -309,88 +315,146 @@ public class Photocapture extends AppCompatActivity {
         }
     }
 
-    //@Override
-    public void onRequestPermissionsResult(String permissions[], int[] grantResults) {
-
-        boolean haveAllPerms = true;
-        for (int i = 0; i < grantResults.length; i++) {
-            if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                haveAllPerms = false;
-            }
+    /**
+     * A safe way to get an instance of the Camera object.
+     */
+    public static Camera getCameraInstance()
+    {
+        Camera c = null;
+        try
+        {
+            c = Camera.open(); // attempt to get a Camera instance
         }
-
-        if (!haveAllPerms) {
-            Toast.makeText(getApplicationContext(), "This application requires these permissions", Toast.LENGTH_LONG).show();
+        catch (Exception e)
+        {
+            // Camera is not available (in use or does not exist)
+            e.printStackTrace();
         }
-
-        return;
+        return c; // returns null if camera is unavailable
     }
 
-    /** Create a File for saving an image or video */
-    private static File getOutputMediaFile(int type, String tlapsename){
+    private boolean prepareVideoRecorder() {
+        try {
+            medrec.prepare();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+            medrec.release();
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            medrec.release();
+            return false;
+        }
+        return true;
+    }
+
+    private void releaseMedRec() {
+        if (medrec != null) {
+            medrec.reset();
+            medrec.release();
+            medrec = null;
+            mCamera.lock();
+        }
+    }
+
+    private void releaseCam() {
+        if (mCamera != null) {
+            mCamera.release();
+            mCamera = null;
+        }
+    }
+
+    private File getOutputMediaFile() {
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
 
-        //String tlapsename = "try1";
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_MOVIES), "Timelapse");
 
-        Log.d(TAG, "tname: " + tlapsename);
-
-        File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + "/" + "timelapsefiles", tlapsename);
-        if (!mediaStorageDir.exists()) {
-            mediaStorageDir.mkdirs();
-        }
-
-
-        //File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-        //        Environment.DIRECTORY_PICTURES), "MyCameraApp");
         // This location works best if you want the created images to be shared
         // between applications and persist after your app has been uninstalled.
 
         // Create the storage directory if it does not exist
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
-                Log.d("MyCameraApp", "failed to create directory");
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                System.out.println("System failed to make directory!");
                 return null;
             }
         }
-
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.US).format(new Date());
+        tlapsename = timeStamp;
         File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE){
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_"+ timeStamp + ".jpg");
-        } else if(type == MEDIA_TYPE_VIDEO) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_"+ timeStamp + ".mp4");
-        } else {
-            return null;
-        }
-
-
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator + "VID_" + timeStamp + ".MP4");
         return mediaFile;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu m) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.captmenu, m);
-        return true;
-    }
+    /** Alt method from original
+     private static File getOutputMediaFile(int type, String tlapsename){
+     // To be safe, you should check that the SDCard is mounted
+     // using Environment.getExternalStorageState() before doing this.
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.menu_settings:
-                Intent intent1 = new Intent(this, CaptureSettings.class);
-                startActivity(intent1);
-                break;
+     //String tlapsename = "try1";
 
-        }
-        return true;
-    }
+     Log.d(TAG, "tname: " + tlapsename);
 
+     File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + "/" + "timelapsefiles", tlapsename);
+     if (!mediaStorageDir.exists()) {
+     mediaStorageDir.mkdirs();
+     }
+
+
+     //File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+     //        Environment.DIRECTORY_PICTURES), "MyCameraApp");
+     // This location works best if you want the created images to be shared
+     // between applications and persist after your app has been uninstalled.
+
+     // Create the storage directory if it does not exist
+     if (! mediaStorageDir.exists()){
+     if (! mediaStorageDir.mkdirs()){
+     Log.d("MyCameraApp", "failed to create directory");
+     return null;
+     }
+     }
+
+     // Create a media file name
+     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+     File mediaFile;
+     if (type == MEDIA_TYPE_IMAGE){
+     mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+     "IMG_"+ timeStamp + ".jpg");
+     } else if(type == MEDIA_TYPE_VIDEO) {
+     mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+     "VID_"+ timeStamp + ".mp4");
+     } else {
+     return null;
+     }
+
+
+     return mediaFile;
+     }*/
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
