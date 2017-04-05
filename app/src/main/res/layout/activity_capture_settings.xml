@@ -5,21 +5,53 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.timelapse.CaptureSettings">
+    tools:context="com.example.timelapse.CaptureSettings"
+    android:background="@drawable/set_bg">
+
+
+    <TextView
+        android:id="@+id/step1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Step 1: Select capture rate"
+        android:fontFamily="sans-serif"
+        android:textSize="30sp"
+        android:textColor="@color/colorAccent"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30px"/>
+
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="10"
         android:inputType="number"
         android:id="@+id/smallinterval"
-        />
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/step1" />
+
     <Spinner
         android:id="@+id/biginterval"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/smallinterval">
+        android:layout_below="@+id/smallinterval"
+        android:layout_centerInParent="true">
 
     </Spinner>
+
+    <TextView
+        android:id="@+id/step2"
+        android:layout_marginTop="50px"
+        android:fontFamily="sans-serif"
+        android:layout_marginBottom="50px"
+        android:textSize="30sp"
+        android:textColor="@color/colorAccent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Step 2: Select Folder Name"
+        android:layout_centerInParent="true"
+        android:layout_below="@id/biginterval" />
+
+
 
 
     <Button
@@ -31,6 +63,7 @@
         android:layout_height="60dp"
         android:background="@drawable/buttonshape"
         android:shadowColor="#A8A8A8"
+        android:layout_marginTop="50px"
         android:shadowDx="0"
         android:shadowDy="0"
         android:shadowRadius="5"
@@ -41,9 +74,12 @@
 
     <EditText
         android:id="@+id/filename"
-        android:hint="timelapse-1"
+        android:hint="Default: timelapse-1"
+        android:textSize="15sp"
+        android:layout_marginTop="120px"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:layout_below="@+id/biginterval"
 
         />

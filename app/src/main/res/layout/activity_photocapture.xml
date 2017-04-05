@@ -4,7 +4,7 @@
     android:orientation="horizontal"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    tools:context="edu.fandm.aboak.timelapse.CameraPreviewActivity">
+    tools:context="com.example.timelapse.Photocapture">
 
     <FrameLayout
         android:id="@+id/camera_preview"
@@ -47,49 +47,5 @@
             android:text="STOP"
             android:visibility="invisible"/>
 
-        <Button
-            android:id="@+id/playButton"
-            android:textColor="#F7F7F7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start"
-            android:layout_marginBottom="20dp"
-            android:background="#000000"
-            android:onClick="play"
-            android:text="Play" />
-
-        <Button
-            android:id="@+id/saveButton"
-            android:textColor="#F7F7F7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:onClick="save"
-            android:background="#000000"
-            android:layout_marginBottom="20dp"
-            android:text="Save" />
-
-        <Button
-            android:id="@+id/galleyButton"
-            android:textColor="#F7F7F7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|start"
-            android:onClick="gallery"
-            android:background="#000000"
-            android:layout_marginBottom="20dp"
-            android:text="Gallery" />
-
-        <Button
-            android:id="@+id/settingsButton"
-            android:textColor="#F7F7F7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|end"
-            android:onClick="settings"
-            android:background="#000000"
-            android:layout_marginBottom="20dp"
-            android:text="Settings" />
     </FrameLayout>
-
 </LinearLayout>
