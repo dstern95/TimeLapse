@@ -71,11 +71,8 @@ public class Photocapture extends AppCompatActivity {
 
     private SurfaceHolder mHolder;
     String tlapsename;
-    private Camera.PictureCallback mPicture;
     public static final int MEDIA_TYPE_IMAGE = 1;
     public static final int MEDIA_TYPE_VIDEO = 1;
-    public boolean running;
-    public long timebetween;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
