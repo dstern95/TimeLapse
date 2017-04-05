@@ -3,6 +3,7 @@
     package="com.example.timelapse">
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_VIDEO" />
 
     <uses-feature
         android:name="android.hardware.camera"
