@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
@@ -28,12 +29,9 @@ public class MainActivity extends AppCompatActivity {
     private final static String TAG = MainActivity.class.getName();
 
     public static final int RequestPermissionCode = 1;
-    public NumberPicker frameRatePick  = null;
-    private float capRate;
-    public ArrayList<String> tracker = new ArrayList<>();
-    public ArrayList<String> namestracker = new ArrayList<>();
+    public static final String MyPREFERENCES = "MyPrefs" ;
+    SharedPreferences sharedpreferences;
 
-    public static final int SECOND_CODE = 0;
 
 
     @Override
@@ -44,25 +42,17 @@ public class MainActivity extends AppCompatActivity {
             requestPerm();
         }
 
-        //Makes a dedicataed folder to store files related to this app
-        File f = new File(Environment.getExternalStorageDirectory(), "PowerLapseFiles");
-        if (!f.exists()) {
-            f.mkdirs();
-        }
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
-        String error = "Um with great power comes great responsibility and we promise to use it wisely but we need these permissions";
 
-        if(!checkPerm()){
-            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
-        }
+        Log.d(TAG, sharedpreferences.getString("sval","10"));
+        Log.d(TAG, "here");
+        Log.d(TAG,"sec "+ sharedpreferences.getString("bval2","10"));
 
-        capRate = 1;
-        frameRatePick = (NumberPicker) findViewById(R.id.numberPicker);
-        frameRatePick.setMaxValue(10);
-        frameRatePick.setMinValue(1);
-        frameRatePick.setValue(1);
-        frameRatePick.setWrapSelectorWheel(false);
-        //frameRatePick.setOnValueChangedListener(this);
+
+
+
+
     }
 
 
@@ -92,24 +82,14 @@ public class MainActivity extends AppCompatActivity {
     {
         if(checkCameraHardware(this)){
             Intent intent1 = new Intent(this, Photocapture.class);
-            intent1.putExtra("fps", capRate);
-            intent1.putStringArrayListExtra("tracker", tracker);
-            startActivityForResult(intent1, SECOND_CODE);
+
+            startActivity(intent1);
+
+
         }
     }
 
-    @Override
-    protected void onActivityResult(int request, int result, Intent i){
-        super.onActivityResult(request, result, i);
-        if(request == SECOND_CODE){
-            if(result == RESULT_OK){
-                String name = i.getStringArrayExtra("fname")[0]; //strs
-                String fname = i.getStringArrayExtra("fname")[1];
-                namestracker.add(name);
-                tracker.add(fname);
-            }
-        }
-    }
+
 
     private boolean checkCameraHardware(Context context) {
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {

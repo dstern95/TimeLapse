@@ -239,36 +239,7 @@ public class Photocapture extends AppCompatActivity {
         }
     }
 
-    public void save() {
-        if (doneRec) {
-            ask();
-        }
-    }
 
-    public void ask() {
-        final EditText fpath = new EditText(this);
-        fpath.setHint("This is the name of the saved file");
-        new AlertDialog.Builder(this)
-                .setTitle("Saving TimeLapse...")
-                .setMessage("Enter the name of your recording:")
-                .setView(fpath)
-                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String url = fpath.getText().toString();
-                        Intent intent = getIntent();
-                        String[] strs = {url, tlapsename};
-                        intent.putExtra("strs", strs);
-                        setResult(RESULT_OK, intent);
-                        finish();
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                    }
-                })
-                .show();
-    }
 
     /**
      * A basic Camera preview class
