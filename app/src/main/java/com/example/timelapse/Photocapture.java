@@ -144,7 +144,7 @@ public class Photocapture extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         releaseMedRec();
-        releaseCam();
+        //releaseCam();
     }
 
     @Override
@@ -377,7 +377,10 @@ public class Photocapture extends AppCompatActivity {
             medrec.reset();
             medrec.release();
             medrec = null;
-            mCamera.lock();
+            if(mCamera!=null){
+                mCamera.lock();
+            }
+
         }
     }
 
