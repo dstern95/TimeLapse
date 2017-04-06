@@ -338,6 +338,15 @@ public class Photocapture extends AppCompatActivity {
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         tlapsename = sharedpreferences.getString("filename","vid");
+        if (tlapsename.equals(""))
+        {
+            tlapsename = "vid";
+        }
+        if (tlapsename==null)
+        {
+            tlapsename = "vid";
+
+        }
         int i = 0;
         String tmpname = tlapsename;
         while (ename(tlapsename) == false)
