@@ -42,7 +42,7 @@ public class PhotoFiles extends AppCompatActivity {
                 String filename = listView.getItemAtPosition(position).toString();
 
                 Intent i = new Intent(PhotoFiles.this, ViewIndiv.class);
-                i.putExtra("foldername", filename);
+                i.putExtra("filename", filename);
 
                 startActivity(i);
 

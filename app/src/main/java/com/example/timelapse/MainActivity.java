@@ -98,18 +98,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int request, int result, Intent i){
-        super.onActivityResult(request, result, i);
-        if(request == SECOND_CODE){
-            if(result == RESULT_OK){
-                String name = i.getStringArrayExtra("fname")[0]; //strs
-                String fname = i.getStringArrayExtra("fname")[1];
-                namestracker.add(name);
-                tracker.add(fname);
-            }
-        }
-    }
+
 
     private boolean checkCameraHardware(Context context) {
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {

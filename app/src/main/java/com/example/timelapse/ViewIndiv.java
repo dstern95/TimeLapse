@@ -1,10 +1,12 @@
 package com.example.timelapse;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,7 +23,7 @@ public class ViewIndiv extends AppCompatActivity implements SurfaceHolder.Callba
     SurfaceHolder mHolder;
     MediaPlayer mp;
     boolean pausing = false;
-    String stringPath = "/sdcard/Movies/Timelapse/VID_2017_04_05_01_05_43.MP4";
+    String stringPath;
 
 
     @Override
@@ -30,7 +32,11 @@ public class ViewIndiv extends AppCompatActivity implements SurfaceHolder.Callba
         setContentView(R.layout.activity_view_indiv);
         Button buttonPlayVideo = (Button) findViewById(R.id.playvideoplayer);
         Button buttonPauseVideo = (Button) findViewById(R.id.pausevideoplayer);
-
+        Intent i = new Intent();
+        Bundle extra = getIntent().getExtras();
+        String fname = extra.getString("filename");
+        stringPath = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_MOVIES) +  "/Timelapse/" + fname;
         getWindow().setFormat(PixelFormat.UNKNOWN);
         mSurface = (SurfaceView) findViewById(R.id.surfaceview);
         mHolder = mSurface.getHolder();
