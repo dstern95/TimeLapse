@@ -28,6 +28,9 @@ import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
+
+    //using free gift
+    
     private final static String TAG = MainActivity.class.getName();
 
     public static final int RequestPermissionCode = 1;
