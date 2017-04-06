@@ -103,8 +103,6 @@ public class CaptureSettings extends AppCompatActivity {
             String atime = Float.toString(actualtime);
             Log.d(TAG, atime);
 
-
-
         }
         @Override
         public void onNothingSelected(AdapterView<?> parent)
