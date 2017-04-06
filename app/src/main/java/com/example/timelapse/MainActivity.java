@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
     //Links to the stat button and we check if device has a camera, and if it does it starts the recording activity
     public void Photo(View v)
     {
-        if(checkCameraHardware(this)){
+        if(checkCameraHardware(this)&& checkPerm()){
             Intent intent1 = new Intent(this, Photocapture.class);
             startActivity(intent1);
         }
