@@ -45,9 +45,6 @@ public class MainActivity extends AppCompatActivity {
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
 
-        Log.d(TAG, sharedpreferences.getString("sval","10"));
-        Log.d(TAG, "here");
-        Log.d(TAG,"sec "+ sharedpreferences.getString("bval2","10"));
 
 
 

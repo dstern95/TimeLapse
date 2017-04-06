@@ -33,9 +33,6 @@
         <activity
             android:name=".Photocapture"
             android:screenOrientation="landscape" />
-        <activity
-            android:name=".Play"
-            android:screenOrientation="landscape" />
         <activity android:name=".CaptureSettings" />
         <activity android:name=".PhotoFiles" />
         <activity android:name=".viewAlbum" />

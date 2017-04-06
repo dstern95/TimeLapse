@@ -199,7 +199,14 @@ public class Photocapture extends AppCompatActivity {
             //b1.setVisibility(View.INVISIBLE);
             b1.setText("STOP");
             Log.d(TAG, Float.toString(CframeRate));
-            CframeRate = 1;
+            sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
+
+            CframeRate = 1/(Float.valueOf(sharedpreferences.getString("bval2","10"))*Float.valueOf(sharedpreferences.getString("sval","10")));
+
+
+            Log.d(TAG, sharedpreferences.getString("sval","10"));
+            Log.d(TAG, "here");
+            Log.d(TAG,"sec "+ sharedpreferences.getString("bval2","10"));
 
             mCamera.unlock();
             medrec.setCamera(mCamera);
