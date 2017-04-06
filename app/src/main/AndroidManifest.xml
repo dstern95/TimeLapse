@@ -35,7 +35,6 @@
             android:screenOrientation="landscape" />
         <activity android:name=".CaptureSettings" />
         <activity android:name=".PhotoFiles" />
-        <activity android:name=".viewAlbum" />
         <activity android:name=".ViewIndiv"></activity>
     </application>
 

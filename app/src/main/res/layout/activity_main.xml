@@ -67,12 +67,6 @@
         android:layout_centerInParent="true"
         android:layout_above="@id/angry_btn"/>
 
-    <NumberPicker android:id="@+id/numberPicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_below="@id/angery">
-    </NumberPicker>
 
 
 

@@ -29,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int RequestPermissionCode = 1;
     public NumberPicker frameRatePick  = null;
-    private float capRate;
-    public ArrayList<String> tracker = new ArrayList<>();
-    public ArrayList<String> namestracker = new ArrayList<>();
+    //private float capRate;
+    //public ArrayList<String> tracker = new ArrayList<>();
+    //public ArrayList<String> namestracker = new ArrayList<>();
 
     public static final int SECOND_CODE = 0;
 
@@ -56,12 +56,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, error, Toast.LENGTH_LONG).show();
         }
 
-        capRate = 1;
-        frameRatePick = (NumberPicker) findViewById(R.id.numberPicker);
-        frameRatePick.setMaxValue(10);
-        frameRatePick.setMinValue(1);
-        frameRatePick.setValue(1);
-        frameRatePick.setWrapSelectorWheel(false);
         //frameRatePick.setOnValueChangedListener(this);
     }
 
@@ -92,9 +86,8 @@ public class MainActivity extends AppCompatActivity {
     {
         if(checkCameraHardware(this)){
             Intent intent1 = new Intent(this, Photocapture.class);
-            intent1.putExtra("fps", capRate);
-            intent1.putStringArrayListExtra("tracker", tracker);
-            startActivityForResult(intent1, SECOND_CODE);
+
+            startActivity(intent1);
         }
     }
 

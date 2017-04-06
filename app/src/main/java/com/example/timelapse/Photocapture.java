@@ -90,8 +90,8 @@ public class Photocapture extends AppCompatActivity {
 
         medrec = new MediaRecorder();
 
-        Bundle extraInfo = getIntent().getExtras(); //get all the other variables being passed in
-        CframeRate = extraInfo.getFloat("frames per second");
+        //Bundle extraInfo = getIntent().getExtras(); //get all the other variables being passed in
+        //CframeRate = extraInfo.getFloat("frames per second");
 
         mCamera = getCameraInstance();
         mPreview = new CameraPreview(this, mCamera);
@@ -391,15 +391,7 @@ public class Photocapture extends AppCompatActivity {
         //return mediaFile;
     }
 
-    public void gallery(View v){
-        //Intent intent = new Intent(this, VidGallery.class);
-        //startActivity(intent);
-    }
-    public void settings(View v){
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("fps",1);
-        startActivityForResult(intent,RESULT_OK);
-    }
+
 
     /** Alt method from original
      private static File getOutputMediaFile(int type, String tlapsename){
