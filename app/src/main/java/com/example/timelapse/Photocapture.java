@@ -155,6 +155,7 @@ public class Photocapture extends AppCompatActivity {
     }
 
     public void capture(View v) {
+        //starts or stops the video record at the desired frame rate
         Button b1 = (Button) findViewById(R.id.captureButton);
         if (isRec) {
             b1.setText("CAPTURE");
@@ -170,13 +171,9 @@ public class Photocapture extends AppCompatActivity {
             b1.setText("STOP");
             Log.d(TAG, Float.toString(CframeRate));
             sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-
+            //gets the frame rate
             CframeRate = 1/(Float.valueOf(sharedpreferences.getString("bval2","10"))*Float.valueOf(sharedpreferences.getString("sval","10")));
 
-
-            Log.d(TAG, sharedpreferences.getString("sval","10"));
-            Log.d(TAG, "here");
-            Log.d(TAG,"sec "+ sharedpreferences.getString("bval2","10"));
 
             mCamera.unlock();
             medrec.setCamera(mCamera);
@@ -338,7 +335,6 @@ public class Photocapture extends AppCompatActivity {
             }
         }
         // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.US).format(new Date());
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
         tlapsename = sharedpreferences.getString("filename","vid");
@@ -360,10 +356,9 @@ public class Photocapture extends AppCompatActivity {
     }
     public boolean ename(String fname)
     {
+        //checks if file already exists
         File loc[] = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + "/" + "Timelapse").listFiles();
         fname = fname+".MP4";
-        Log.d(TAG, "here8");
-
         for (int i = 0; i < loc.length; i++) {
             Log.d(TAG, loc[i].getName() +"="+fname);
 
