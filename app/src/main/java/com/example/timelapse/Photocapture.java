@@ -213,7 +213,7 @@ public class Photocapture extends AppCompatActivity {
             medrec.setVideoSource(MediaRecorder.VideoSource.CAMERA);
             CamcorderProfile cprof = CamcorderProfile.get(CamcorderProfile.QUALITY_TIME_LAPSE_1080P);
             Log.d(TAG, Float.toString(cprof.videoFrameRate));
-            medrec.setCaptureRate(cprof.videoFrameRate / CframeRate);
+            medrec.setCaptureRate(CframeRate);
             medrec.setProfile(cprof);
             medrec.setOutputFile(getOutputMediaFile().toString());
 

@@ -41,7 +41,7 @@ public class PhotoFiles extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String filename = listView.getItemAtPosition(position).toString();
 
-                Intent i = new Intent(PhotoFiles.this, Play.class);
+                Intent i = new Intent(PhotoFiles.this, ViewIndiv.class);
                 i.putExtra("foldername", filename);
 
                 startActivity(i);
