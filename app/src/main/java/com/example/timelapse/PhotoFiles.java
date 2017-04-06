@@ -1,5 +1,7 @@
 package com.example.timelapse;
 
+//Implement the view where we show the user the list of all previous timelapse files
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Environment;
@@ -25,12 +27,16 @@ public class PhotoFiles extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_files);
+        
+        //Get the exact filepath for our files
         File loc[] = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + "/" + "Timelapse").listFiles();
         fileArray = new String[loc.length];
 
         for (int i = 0; i < loc.length; i++) {
             fileArray[i] = loc[i].getName();
         }
+        
+        //Creating a list of files obtained in that particular folder
         ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, fileArray);
 
         final ListView listView = (ListView) findViewById(R.id.list);

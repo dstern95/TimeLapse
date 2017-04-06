@@ -18,18 +18,20 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
+//Implements the Settings page of the app.
+
 public class CaptureSettings extends AppCompatActivity {
     private final static String TAG = MainActivity.class.getName();
-
     public static final String MyPREFERENCES = "MyPrefs" ;
 
+    //Implementing the setting to give user option to set frame rate
     private Map<String, String> times = new HashMap<>();
     private String[] ordtimes = new String[4];
     SharedPreferences sharedpreferences;
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) { //Drop down menus to select capture rate
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_capture_settings);
         times.put("days","86400");
@@ -42,8 +44,6 @@ public class CaptureSettings extends AppCompatActivity {
         ordtimes[0] = "seconds";
         EditText et = (EditText)findViewById(R.id.smallinterval);
         sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
-
-        //sharedpreferences = this.getPreferences(Context.MODE_PRIVATE);
         et.setText(sharedpreferences.getString("sval","10"));
 
 
@@ -55,8 +55,6 @@ public class CaptureSettings extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         final Spinner s = (Spinner)findViewById(R.id.biginterval);
-        //String[] btime = new String[1];
-        //btime = times.keySet().toArray(btime);
         String[] btime = ordtimes;
         sharedpreferences = this.getPreferences(Context.MODE_PRIVATE);
 
@@ -69,6 +67,8 @@ public class CaptureSettings extends AppCompatActivity {
 
     }
 
+
+    //Links to the save settings button. Saves the settings for future recordings
     public void save(View v){
         Spinner spin = (Spinner)findViewById(R.id.biginterval);
         EditText et = (EditText)findViewById(R.id.smallinterval);
@@ -84,7 +84,6 @@ public class CaptureSettings extends AppCompatActivity {
         editor.commit();
 
         int a = spin.getSelectedItemPosition();
-        Log.d(TAG, Integer.toString(a));
 
 
 
@@ -101,13 +100,12 @@ public class CaptureSettings extends AppCompatActivity {
             String bval = times.get(itemTextView.getText());
             float actualtime = Float.valueOf(bval) * Float.valueOf(sval);
             String atime = Float.toString(actualtime);
-            Log.d(TAG, atime);
 
         }
         @Override
         public void onNothingSelected(AdapterView<?> parent)
         {
-
+            //Do nothing
         }
 
 

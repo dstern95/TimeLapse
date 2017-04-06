@@ -1,5 +1,8 @@
 package com.example.timelapse;
 
+
+//mainActivity + Home Screen for PowerLapse
+
 import android.Manifest;
 import android.app.ActionBar;
 import android.content.Context;
@@ -28,40 +31,38 @@ public class MainActivity extends AppCompatActivity {
     private final static String TAG = MainActivity.class.getName();
 
     public static final int RequestPermissionCode = 1;
-    public NumberPicker frameRatePick  = null;
-    //private float capRate;
-    //public ArrayList<String> tracker = new ArrayList<>();
-    //public ArrayList<String> namestracker = new ArrayList<>();
-
-    public static final int SECOND_CODE = 0;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //We check if we obtain permissions
+
         if(!checkPerm()){
             requestPerm();
         }
 
-        //Makes a dedicataed folder to store files related to this app
+        //Makes a dedicated folder to store files related to this app
         File f = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_MOVIES), "Timelapse");
+
+        //Create file if app-specific folder does not exist
         if (!f.exists()) {
             f.mkdirs();
         }
 
-        String error = "Um with great power comes great responsibility and we promise to use it wisely but we need these permissions";
+        String error = "With great power comes great responsibility and we promise to use it wisely.";
 
         if(!checkPerm()){
             Toast.makeText(this, error, Toast.LENGTH_LONG).show();
         }
 
-        //frameRatePick.setOnValueChangedListener(this);
     }
 
 
-
+    //Requesting permissions
     private void requestPerm(){
         ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, CAMERA}, RequestPermissionCode);
     }
@@ -82,18 +83,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
+    //Links to the stat button and we check if device has a camera, and if it does it starts the recording activity
     public void Photo(View v)
     {
         if(checkCameraHardware(this)){
             Intent intent1 = new Intent(this, Photocapture.class);
-
             startActivity(intent1);
         }
     }
 
 
-
+    //Implements the check to see if device has camera
     private boolean checkCameraHardware(Context context) {
         if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             // this device has a camera
@@ -104,31 +104,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+    //Links to the gallery button. takes user to list of previous timelapses
     public void Photoview(View v)
     {
-        Log.d(TAG, "here2");
-
-
         Intent intent1 = new Intent(this, PhotoFiles.class);
         startActivity(intent1);
 
-        //Intent intent1 = new Intent(this, PhotoView.class);
-        //startActivity(intent1);
-
     }
 
+    //Links to the settings button - takes user to settings menu
     public void Settings(View v)
     {
-        Log.d(TAG, "here2");
-
-
-
         Intent intent1 = new Intent(this, CaptureSettings.class);
         startActivity(intent1);
-
-        //Intent intent1 = new Intent(this, PhotoView.class);
-        //startActivity(intent1);
-
     }
 
     @Override
