@@ -365,7 +365,6 @@ public class Photocapture extends AppCompatActivity {
         // To be safe, you should check that the SDCard is mounted
         // using Environment.getExternalStorageState() before doing this.
 
-        Log.d(TAG, "here8");
 
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_MOVIES), "Timelapse");
@@ -382,15 +381,43 @@ public class Photocapture extends AppCompatActivity {
         }
         // Create a media file name
         String timeStamp = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss", Locale.US).format(new Date());
-        tlapsename = timeStamp;
-        File mediaFile;
-        mediaFile = new File(mediaStorageDir.getPath() + File.separator + "VID_" + timeStamp + ".MP4");
+        sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
 
-        String ms =mediaStorageDir.getPath() + File.separator + "VID_" + timeStamp + ".MP4";
+        tlapsename = sharedpreferences.getString("filename","vid");
+        int i = 0;
+        String tmpname = tlapsename;
+        while (ename(tlapsename) == false)
+        {
+            i+=1;
+            tlapsename = tmpname+"-"+Integer.toString(i);
+
+        }
+
+
+
+        String ms =mediaStorageDir.getPath() + File.separator + tlapsename + ".MP4";
+        Toast.makeText(this, "saved as "+tlapsename, Toast.LENGTH_SHORT).show();
+
         return ms;
-        //return mediaFile;
     }
+    public boolean ename(String fname)
+    {
+        File loc[] = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES) + "/" + "Timelapse").listFiles();
+        fname = fname+".MP4";
+        Log.d(TAG, "here8");
 
+        for (int i = 0; i < loc.length; i++) {
+            Log.d(TAG, loc[i].getName() +"="+fname);
+
+            if (loc[i].getName().equals(fname))
+            {
+                    return false;
+            }
+
+        }
+
+        return true;
+    }
 
 
     /** Alt method from original

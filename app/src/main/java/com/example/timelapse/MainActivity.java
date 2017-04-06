@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         //Makes a dedicataed folder to store files related to this app
-        File f = new File(Environment.getExternalStorageDirectory(), "PowerLapseFiles");
+        File f = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_MOVIES), "Timelapse");
         if (!f.exists()) {
             f.mkdirs();
         }
