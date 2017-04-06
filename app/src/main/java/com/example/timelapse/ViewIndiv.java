@@ -30,12 +30,11 @@ public class ViewIndiv extends AppCompatActivity implements SurfaceHolder.Callba
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_indiv);
-        Button buttonPlayVideo = (Button) findViewById(R.id.playvideoplayer);
         Intent i = new Intent();
         Bundle extra = getIntent().getExtras();
         String fname = extra.getString("filename");
         stringPath = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_MOVIES) +  "/Timelapse/" + fname;
+                Environment.DIRECTORY_MOVIES) + "/Timelapse/" + fname;
         getWindow().setFormat(PixelFormat.UNKNOWN);
         mSurface = (SurfaceView) findViewById(R.id.surfaceview);
         mHolder = mSurface.getHolder();
@@ -43,40 +42,35 @@ public class ViewIndiv extends AppCompatActivity implements SurfaceHolder.Callba
         mHolder.setFixedSize(176, 144);
         mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         mp = new MediaPlayer();
-
-        buttonPlayVideo.setOnClickListener(new Button.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                pausing = false;
-
-                if (mp.isPlaying()) {
-                    mp.reset();
-                }
-
-                mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                mp.setDisplay(mHolder);
-
-                try {
-                    mp.setDataSource(stringPath);
-                    mp.prepare();
-                } catch (IllegalArgumentException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IllegalStateException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-
-                mp.start();
-            }
-        });
-
     }
+
+        public void onClick(View v) {
+                // TODO Auto-generated method stub
+            pausing = false;
+
+            if (mp.isPlaying()) {
+                mp.reset();
+            }
+
+            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mp.setDisplay(mHolder);
+
+            try {
+                mp.setDataSource(stringPath);
+                mp.prepare();
+            } catch (IllegalArgumentException e) {
+                    // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalStateException e) {
+                    // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            mp.start();
+            }
 
 
     @Override
