@@ -31,7 +31,6 @@ public class ViewIndiv extends AppCompatActivity implements SurfaceHolder.Callba
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_indiv);
         Button buttonPlayVideo = (Button) findViewById(R.id.playvideoplayer);
-        Button buttonPauseVideo = (Button) findViewById(R.id.pausevideoplayer);
         Intent i = new Intent();
         Bundle extra = getIntent().getExtras();
         String fname = extra.getString("filename");
@@ -74,23 +73,6 @@ public class ViewIndiv extends AppCompatActivity implements SurfaceHolder.Callba
                 }
 
                 mp.start();
-
-
-            }
-        });
-
-        buttonPauseVideo.setOnClickListener(new Button.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-                if (pausing) {
-                    pausing = false;
-                    mp.start();
-                } else {
-                    pausing = true;
-                    mp.pause();
-                }
             }
         });
 
