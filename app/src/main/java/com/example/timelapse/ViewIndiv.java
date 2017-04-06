@@ -17,14 +17,15 @@ import android.widget.Button;
 
 import java.io.IOException;
 
-public class ViewIndiv extends AppCompatActivity implements SurfaceHolder.Callback {
+//This file implements viewing the a timelapse file
 
+
+public class ViewIndiv extends AppCompatActivity implements SurfaceHolder.Callback {
     SurfaceView mSurface;
     SurfaceHolder mHolder;
     MediaPlayer mp;
     boolean pausing = false;
     String stringPath;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +33,7 @@ public class ViewIndiv extends AppCompatActivity implements SurfaceHolder.Callba
         setContentView(R.layout.activity_view_indiv);
         Intent i = new Intent();
         Bundle extra = getIntent().getExtras();
-        String fname = extra.getString("filename");
+        String fname = extra.getString("filename"); //Gte name of file we want to view
         stringPath = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_MOVIES) + "/Timelapse/" + fname;
         getWindow().setFormat(PixelFormat.UNKNOWN);
@@ -44,11 +45,12 @@ public class ViewIndiv extends AppCompatActivity implements SurfaceHolder.Callba
         mp = new MediaPlayer();
     }
 
+        //Connects to SurfaceView so when you press anywhere on the screen it plays the video
         public void onClick(View v) {
                 // TODO Auto-generated method stub
             pausing = false;
 
-            if (mp.isPlaying()) {
+            if (mp.isPlaying()) { //Check if it is already playing
                 mp.reset();
             }
 
@@ -76,18 +78,19 @@ public class ViewIndiv extends AppCompatActivity implements SurfaceHolder.Callba
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width,
                                int height) {
-// TODO Auto-generated method stub
+
+        //Nothing to do here
 
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-// TODO Auto-generated method stub
+        //Nothing to do here
 
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-// TODO Auto-generated method stub
+        //Nothing to do here
     }
 }

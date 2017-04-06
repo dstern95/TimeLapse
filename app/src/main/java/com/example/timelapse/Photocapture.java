@@ -31,25 +31,16 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
 import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import static android.provider.MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE;
 
 public class Photocapture extends AppCompatActivity {
     public static final String MyPREFERENCES = "MyPrefs";
@@ -71,8 +62,6 @@ public class Photocapture extends AppCompatActivity {
 
     private SurfaceHolder mHolder;
     String tlapsename;
-    public static final int MEDIA_TYPE_IMAGE = 1;
-    public static final int MEDIA_TYPE_VIDEO = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,16 +72,9 @@ public class Photocapture extends AppCompatActivity {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-
         setContentView(R.layout.activity_photocapture);
-
         camsavedInstanceState = savedInstanceState;
-
         medrec = new MediaRecorder();
-
-        //Bundle extraInfo = getIntent().getExtras(); //get all the other variables being passed in
-        //CframeRate = extraInfo.getFloat("frames per second");
-
         mCamera = getCameraInstance();
         mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
@@ -136,7 +118,6 @@ public class Photocapture extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         releaseMedRec();
-        //releaseCam();
     }
 
     @Override
@@ -173,18 +154,9 @@ public class Photocapture extends AppCompatActivity {
         preview.addView(mPreview); //Finally show the preview
     }
 
-    public void play(View v) {
-        //Intent i = new Intent(this, Play.class);
-        //i.putExtra("recName", tlapsename);
-        //startActivity(i);
-    }
-
     public void capture(View v) {
         Button b1 = (Button) findViewById(R.id.captureButton);
-        //Button b2 = (Button) findViewById(R.id.captureButton2);
         if (isRec) {
-            //b2.setVisibility(View.INVISIBLE);
-            //b1.setVisibility(View.VISIBLE);
             b1.setText("CAPTURE");
 
             medrec.stop(); //Stop Recorder
@@ -195,8 +167,6 @@ public class Photocapture extends AppCompatActivity {
             doneRec = true;
             onResume();
         } else {
-            //b2.setVisibility(View.VISIBLE);
-            //b1.setVisibility(View.INVISIBLE);
             b1.setText("STOP");
             Log.d(TAG, Float.toString(CframeRate));
             sharedpreferences = getSharedPreferences(MyPREFERENCES, Context.MODE_PRIVATE);
@@ -216,15 +186,6 @@ public class Photocapture extends AppCompatActivity {
             medrec.setCaptureRate(CframeRate);
             medrec.setProfile(cprof);
             medrec.setOutputFile(getOutputMediaFile().toString());
-
-            /*
-            try {
-                medrec.setOutputFile(getOutputMediaFile().toString());
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-            */
-
             medrec.setPreviewDisplay(mPreview.getHolder().getSurface());
             if (prepareVideoRecorder()) {
                 try {
@@ -237,12 +198,6 @@ public class Photocapture extends AppCompatActivity {
                 medrec.start();
                 isRec = true;
             }
-
-            //isRec = true;
-
-
-
-
         }
     }
 
@@ -327,6 +282,7 @@ public class Photocapture extends AppCompatActivity {
         return c; // returns null if camera is unavailable
     }
 
+    //Make Video Recorder ready to start recording
     private boolean prepareVideoRecorder() {
         try {
             medrec.prepare();
@@ -342,6 +298,7 @@ public class Photocapture extends AppCompatActivity {
         return true;
     }
 
+    //Release the media recorder
     private void releaseMedRec() {
         if (medrec != null) {
             medrec.reset();
@@ -354,6 +311,7 @@ public class Photocapture extends AppCompatActivity {
         }
     }
 
+    //Release the Camera
     private void releaseCam() {
         if (mCamera != null) {
             mCamera.release();
@@ -418,52 +376,6 @@ public class Photocapture extends AppCompatActivity {
 
         return true;
     }
-
-
-    /** Alt method from original
-     private static File getOutputMediaFile(int type, String tlapsename){
-     // To be safe, you should check that the SDCard is mounted
-     // using Environment.getExternalStorageState() before doing this.
-
-     //String tlapsename = "try1";
-
-     Log.d(TAG, "tname: " + tlapsename);
-
-     File mediaStorageDir = new File(Environment.getExternalStorageDirectory() + "/" + "timelapsefiles", tlapsename);
-     if (!mediaStorageDir.exists()) {
-     mediaStorageDir.mkdirs();
-     }
-
-
-     //File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-     //        Environment.DIRECTORY_PICTURES), "MyCameraApp");
-     // This location works best if you want the created images to be shared
-     // between applications and persist after your app has been uninstalled.
-
-     // Create the storage directory if it does not exist
-     if (! mediaStorageDir.exists()){
-     if (! mediaStorageDir.mkdirs()){
-     Log.d("MyCameraApp", "failed to create directory");
-     return null;
-     }
-     }
-
-     // Create a media file name
-     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-     File mediaFile;
-     if (type == MEDIA_TYPE_IMAGE){
-     mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-     "IMG_"+ timeStamp + ".jpg");
-     } else if(type == MEDIA_TYPE_VIDEO) {
-     mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-     "VID_"+ timeStamp + ".mp4");
-     } else {
-     return null;
-     }
-
-
-     return mediaFile;
-     }*/
 }
 
 
